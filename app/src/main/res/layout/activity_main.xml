@@ -33,21 +33,85 @@
         android:id="@+id/botaoRele1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
-        android:text="Rele 1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/rele1"
+        app:layout_constraintBaseline_toBaselineOf="@+id/botaoRele2"
+        app:layout_constraintEnd_toStartOf="@+id/botaoRele2"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <Switch
-        android:id="@+id/switch1"
+    <Button
+        android:id="@+id/botaoRele2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="26dp"
-        android:switchTextAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:text="Switch"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="38dp"
+        android:text="@string/rele2"
+        app:layout_constraintBottom_toTopOf="@+id/botaoRele5"
+        app:layout_constraintEnd_toStartOf="@+id/botaoRele3"
+        app:layout_constraintStart_toEndOf="@+id/botaoRele1" />
+
+    <Button
+        android:id="@+id/botaoRele3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rele3"
+        app:layout_constraintBaseline_toBaselineOf="@+id/botaoRele2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/botaoRele2" />
+
+    <Button
+        android:id="@+id/botaoRele4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="231dp"
+        android:layout_marginEnd="14dp"
+        android:text="@string/rele4"
+        app:layout_constraintEnd_toStartOf="@+id/botaoRele5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/botaoRele1" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/botaoRele5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="22dp"
+        android:text="@string/rele5"
+        app:layout_constraintBottom_toTopOf="@+id/botaoRele7"
+        app:layout_constraintEnd_toStartOf="@+id/botaoRele6"
+        app:layout_constraintStart_toEndOf="@+id/botaoRele4" />
+
+    <Button
+        android:id="@+id/botaoRele6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/rele6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/botaoRele5"
+        app:layout_constraintTop_toTopOf="@+id/botaoRele5" />
+
+    <Button
+        android:id="@+id/botaoRele7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="22dp"
+        android:text="@string/rele7"
+        app:layout_constraintEnd_toStartOf="@+id/botaoRele8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/botaoRele4" />
+
+    <Button
+        android:id="@+id/botaoRele8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="4dp"
+        android:text="@string/rele8"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/botaoRele7"
+        app:layout_constraintTop_toBottomOf="@+id/botaoRele6" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,10 +20,15 @@ import java.util.ArrayList;
 import org.json.JSONObject;
 
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+
+
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -31,7 +36,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 100;
-
+    private ActivityResultLauncher<Intent> speechInputLauncher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         arrayBotoes[6] = findViewById(R.id.botaoRele7);
         arrayBotoes[7] = findViewById(R.id.botaoRele8);
 
+        // Atualiza o estado dos botões com base no estado dos relés
         atualizarEstadoBotao(arrayBotoes);
 
         // Encontra botão do reconhecimento de voz
@@ -66,13 +72,10 @@ public class MainActivity extends AppCompatActivity {
         arrayBotoes[4].setOnClickListener(v -> fazerRequestHttp("rele5", arrayBotoes[4]));
         arrayBotoes[5].setOnClickListener(v -> fazerRequestHttp("rele6", arrayBotoes[5]));
         arrayBotoes[6].setOnClickListener(v -> fazerRequestHttp("rele7", arrayBotoes[6]));
-
-        botaoVoz.setOnClickListener(v -> lerAudio());
-
-
-        // Define um listener de clique para o botão
         arrayBotoes[7].setOnClickListener(v -> fazerRequestHttp("rele8", arrayBotoes[7]));
 
+        // Define um listener de clique para o botão de reconhecimento de voz
+        botaoVoz.setOnClickListener(v -> lerAudio());
 
         // Configura o aplicativo para preencher a área de conteúdo após o EdgeToEdge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -80,9 +83,21 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Inicializa o lançador de resultados para o reconhecimento de voz
+        speechInputLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                ArrayList<String> resultStrings = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                if (resultStrings != null && !resultStrings.isEmpty()) {
+                    String voiceInput = resultStrings.get(0);
+                    Toast.makeText(this, "Texto Reconhecido: " + voiceInput, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
     }
 
-    // Defina a URL base
+    // Define a URL base do ESP32
     private static final String ESP32_URL = "http://192.168.1.130/";
 
     // Função que faz o request para o ESP32
@@ -184,42 +199,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Método para ler o audio
+    // Método para iniciar o reconhecimento de voz
     private void lerAudio() {
-        // Cria um intent para o reconhecimento de voz
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        // Define o modelo de linguagem livre para reconhecimento de voz
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        // Define o idioma padrão para o reconhecimento de voz
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        // Define a mensagem exibida durante o reconhecimento de voz
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Fale algo...");
 
         try {
-            // Inicia método para o reconhecimento de voz e espera o resultado
-            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT);
+            // Inicia o lançador de resultado para o reconhecimento de voz
+            speechInputLauncher.launch(intent);
         } catch (Exception e) {
             // Trata erros ao iniciar o reconhecimento de voz
             Toast.makeText(this, "Erro ao iniciar reconhecimento de voz.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Verifica se o resultado é para o reconhecimento de voz
-        if (requestCode == REQUEST_CODE_SPEECH_INPUT) {
-            // Verifica se o reconhecimento de voz foi bem-sucedido e há dados retornados
-            if (resultCode == RESULT_OK && data != null) {
-                // Obtém os resultados do reconhecimento de voz como uma lista de strings
-                ArrayList<String> result = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                // Obtém o texto reconhecido da primeira string na lista
-                String voiceInput = result.get(0);
-
-                // Aqui você pode usar o texto reconhecido, por exemplo, exibir em um toast
-                Toast.makeText(this, "Texto Reconhecido: " + voiceInput, Toast.LENGTH_LONG).show();
-            }
         }
     }
 }

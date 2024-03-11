@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.widget.Toast;
 import android.widget.Button;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -23,6 +26,7 @@ import org.json.JSONObject;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_SPEECH_INPUT = 100;
     private ActivityResultLauncher<Intent> speechInputLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +64,15 @@ public class MainActivity extends AppCompatActivity {
         arrayBotoes[7] = findViewById(R.id.botaoRele8);
 
         // Atualiza o estado dos botões com base no estado dos relés
-        atualizarEstadoBotao(arrayBotoes);
+            // Chama a função para ler o estado dos relés
+        lerEstadoReles(new estadoRelesCallback() {
+            @Override
+            public void onEstadoRelesObtido(boolean[] estadoReles) {
+                // Aqui você recebe o estado dos relés e pode atualizar a interface do usuário
+                atualizarEstadosBotoes(estadoReles, arrayBotoes);
+
+            }
+        });
 
         // Encontra botão do reconhecimento de voz
         Button botaoVoz = findViewById(R.id.botaoRVoz);
@@ -91,6 +104,10 @@ public class MainActivity extends AppCompatActivity {
                 if (resultStrings != null && !resultStrings.isEmpty()) {
                     String voiceInput = resultStrings.get(0);
                     Toast.makeText(this, "Texto Reconhecido: " + voiceInput, Toast.LENGTH_LONG).show();
+
+                    // Chama método que faz controle dos reles
+                    controleRelesVoz(voiceInput, arrayBotoes);
+
                 }
             }
         });
@@ -152,8 +169,13 @@ public class MainActivity extends AppCompatActivity {
         return result.toString();
     }
 
-    // Método para atualizar a cor do botão com base no estado do relé
-    private void atualizarEstadoBotao(final Button[] arrayBotoes) {
+    // Interface para o callback
+    interface estadoRelesCallback {
+        void onEstadoRelesObtido(boolean[] estadoReles);
+    }
+
+    // Método para ler o estado dos relés
+    private void lerEstadoReles(estadoRelesCallback callback) {
         // Faz uma solicitação HTTP para obter o JSON de estado dos relés
         new Thread(() -> {
             try {
@@ -171,13 +193,17 @@ public class MainActivity extends AppCompatActivity {
                     // Analise o JSON para obter os estados dos relés
                     JSONObject json = new JSONObject(response.toString());
 
-                    // Atualiza os estado dos 8 botões
-                    boolean estadoRele;
+                    boolean[] estadoReles = new boolean[8];
+
+                    // Atualiza os estado dos 8 reles
+
                     for (int i = 1; i <= 8; i++) {
-                        estadoRele = json.getBoolean("Rele" + i);
-                        atualizarCorBotaoInicial(arrayBotoes[i - 1], estadoRele);
-                        Log.d("MainActivity", "Estado do Rele " + i + ": " + estadoRele);
+                        estadoReles[i - 1] = json.getBoolean("Rele" + i);
+                        Log.d("MainActivity", "Estado do Rele " + i + ": " + estadoReles[i - 1]);
                     }
+
+                    // Chama o método de callback com o estado dos relés
+                    callback.onEstadoRelesObtido(estadoReles);
 
                 } finally {
                     urlConnection.disconnect();
@@ -188,14 +214,17 @@ public class MainActivity extends AppCompatActivity {
         }).start();
     }
 
-    // Método para atualizar a cor do botão com base no estado do relé
-    private void atualizarCorBotaoInicial(Button botao, boolean estadoRele) {
-        if (estadoRele) {
-            // Se o relé estiver ligado (true), defina a cor do botão como amarelo
-            botao.setBackgroundColor(Color.rgb(252, 199, 50));
-        } else {
-            // Se o relé estiver desligado (false), defina a cor do botão como outra cor, por exemplo, cinza
-            botao.setBackgroundColor(Color.GRAY);
+    // Método que atualiza a cor dos botões
+    private void atualizarEstadosBotoes(boolean[] estadoReles, final Button[] arrayBotoes) {
+        // Atualiza os estado dos 8 botões
+        for (int i = 0; i <= 8; i++) {
+            if (estadoReles[i]) {
+                // Se o relé estiver ligado (true), defina a cor do botão como amarelo
+                arrayBotoes[i].setBackgroundColor(Color.rgb(252, 199, 50));
+            } else {
+                // Se o relé estiver desligado (false), defina a cor do botão como outra cor, por exemplo, cinza
+                arrayBotoes[i].setBackgroundColor(Color.GRAY);
+            }
         }
     }
 
@@ -213,5 +242,49 @@ public class MainActivity extends AppCompatActivity {
             // Trata erros ao iniciar o reconhecimento de voz
             Toast.makeText(this, "Erro ao iniciar reconhecimento de voz.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void controleRelesVoz(String voiceInput, final Button[] arrayBotoes) {
+
+        // Converte a entrada para minúsculas para facilitar
+        voiceInput = voiceInput.toLowerCase();
+
+
+        Toast.makeText(this, "TESTEEEEEEEEEEEEEEEEEE", Toast.LENGTH_SHORT).show();
+
+        if (voiceInput.contains("ligar")) {
+            if (voiceInput.contains("rele")) {
+                int nRele = extrairNumeroRele(voiceInput);
+                if (nRele != -1) {
+                    lerEstadoReles(new estadoRelesCallback() {
+                        @Override
+                        public void onEstadoRelesObtido(boolean[] estadoReles) {
+
+                            // Verifica se o relê já está ligado
+                            if (!estadoReles[nRele - 1]) {
+                                // Se não estiver ligado, faz uma solicitação para ligar o relé.
+                                fazerRequestHttp("rele" + nRele, arrayBotoes[nRele - 1]);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    // Método para extrair o número do relé a partir da entrada de voz
+    private int extrairNumeroRele(String voiceInput) {
+        // Procura por números na entrada de voz
+        Pattern p = Pattern.compile("\\d+");
+        Matcher m = p.matcher(voiceInput);
+
+        // Verifica se um número foi encontrado
+        if (m.find()) {
+            // Retorna o primeiro número encontrado (no caso de "rele1", "rele2", etc.)
+            return Integer.parseInt(m.group());
+        }
+
+        // Retorna -1 se nenhum número for encontrado
+        return -1;
     }
 }

@@ -48,57 +48,41 @@ public class MainActivity extends AppCompatActivity {
 
         // Define um listener de clique para o botão
         arrayBotoes[0].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele1", arrayBotoes[0]);
         });
 
         // Define um listener de clique para o botão
         arrayBotoes[1].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele2", arrayBotoes[1]);
         });
 
         // Define um listener de clique para o botão
         arrayBotoes[2].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele3", arrayBotoes[2]);
         });
 
         // Define um listener de clique para o botão
         arrayBotoes[3].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele4", arrayBotoes[3]);
         });
 
         // Define um listener de clique para o botão
         arrayBotoes[4].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele5", arrayBotoes[4]);
         });
 
         // Define um listener de clique para o botão
         arrayBotoes[5].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele6", arrayBotoes[5]);
         });
 
         // Define um listener de clique para o botão
         arrayBotoes[6].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele7", arrayBotoes[6]);
         });
 
         // Define um listener de clique para o botão
         arrayBotoes[7].setOnClickListener(v -> {
-            // Mostra um toast indicando que o rele foi acionado
-            Toast.makeText(getApplicationContext(), "Rele Acionado!", Toast.LENGTH_SHORT).show();
             fazerRequestHttp("rele8", arrayBotoes[7]);
         });
 

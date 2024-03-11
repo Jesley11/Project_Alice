@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Project Alice</string>
     <string name="mensagem_bem_vindo">Bem-vindo ao Projeto Alice!</string>
+    <string name="botaoVoz">Comando de Voz</string>
 
     <string name="rele1">Rele 1</string>
     <string name="rele2">Rele 2</string>

@@ -1,4 +1,4 @@
-**Project Alice**
+# Project Alice
 
 Project Alice é um aplicativo móvel desenvolvido para controlar uma placa ESP32, permitindo o controle de relés através de solicitações HTTP. Além disso, o aplicativo utiliza o sintetizador de voz do Google para controle por voz.
 
